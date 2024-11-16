@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Google Maps Default Icons Example</title>
+    <meta charset='utf-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <style>
+        body {
+          margin: 0;
+          padding: 0;
+          font-family: Arial, sans-serif;
+        }
+  
+        #googlemaps {
+          height: 50vh;
+          width: 100%;
+        }
+  
+        .controls {
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          padding: 10px;
+          background: white;
+          border-radius: 4px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+  
+        .controls label {
+          display: block;
+          margin: 5px 0;
+        }
+      </style>
+    <script src='https://maps.googleapis.com/maps/api/js?key={YOUR_API_KEY}'></script>
+  </head>
+  <body>
+    <div id='googlemaps'></div>
+    <div class="controls">
+      <label>
+        <input type="checkbox" id="toggleHospitals" checked> Show Hospitals
+      </label>
+      <label>
+        <input type="checkbox" id="toggleTrainStation" checked> Show Train Station
+      </label>
+    </div>
+    <script>
+      let map;
+      
+      const defaultStyle = [
+        {
+          featureType: 'water',
+          elementType: 'geometry',
+          stylers: [{ color: '#ff9999' }]  // yellow
+        },
+      ];
+      
+      const hideTrainStation = [
+      {
+          featureType: 'transit.station',
+          elementType: 'labels',
+          stylers: [{ visibility: 'off' }] 
+        }
+      ];
+
+      const hideHospitalsStyle = [
+        {
+          featureType: 'poi.medical',
+          elementType: 'labels.icon',
+          stylers: [{ visibility: 'off' }]
+        },
+        {
+          featureType: 'poi.medical',
+          elementType: 'labels.text',
+          stylers: [{ visibility: 'off' }]
+        }
+      ];
+
+      function initMap() {
+        const center = new google.maps.LatLng(13.7524938, 100.4935089);
+        
+        map = new google.maps.Map(document.getElementById('googlemaps'), {
+          center: center,
+          zoom: 16,
+          styles: defaultStyle
+        });
+
+        // Handle hospital checkbox
+        document.getElementById('toggleHospitals').addEventListener('change', updateMapStyle);
+        document.getElementById('toggleTrainStation').addEventListener('change', updateMapStyle);
+        function updateMapStyle() {
+          const showHospitals = document.getElementById('toggleHospitals').checked;
+          const showTrainStation = document.getElementById('toggleTrainStation').checked;
+          let newStyle = [...defaultStyle];
+          
+          if (!showHospitals) {
+            newStyle = newStyle.concat(hideHospitalsStyle);
+          }
+          if (!showTrainStation) {
+            newStyle = newStyle.concat(hideTrainStation);
+          }
+          
+
+          map.setOptions({ styles: newStyle });
+        }
+      }
+
+      initMap();
+    </script>
+  </body>
+</html>
